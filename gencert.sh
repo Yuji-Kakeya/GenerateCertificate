@@ -19,7 +19,8 @@ function GenKeyAndCSR(){
 
 function IssuringCert(){
     #Issure Certificate
-    echo "subjectAltName=DNS:$1" > $1/_san.conf
+    WILDCARD=`echo $1 | sed -e "s/^[^.]*/*/g"`
+    echo "subjectAltName=DNS:$1, DNS:${WILDCARD}" > $1/_san.conf
     case "$2" in
         1) #RootCA
             openssl ca -batch -in $1/_request.csr -out $1/public.crt -days ${EXPIRE_DAYS} -config RootCA/conf.cnf -extfile $1/_san.conf 
